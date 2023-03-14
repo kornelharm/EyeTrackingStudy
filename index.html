@@ -19,6 +19,65 @@
                 jsPsych.extensions.webgazer.showPredictions();
             }
 
+            function print_gaze(){
+                var cancelPrint = jsPsych.extensions.webgazer.onGazeUpdate(function(prediction){
+                        console.log(`Currently looking at ${prediction.x}, ${prediction.y}`);
+                    });
+                return cancelPrint;
+            }
+
+            const fermions = `
+                <p style="line-height:3.5em;">In particle physics, a fermion is a particle that follows Fermi-Dirac statistics.</p>
+                <p style="line-height:3.5em;">Generally, it has a half-odd-integer spin: spin 1/2, spin 3/2, etc.</p>
+                <p style="line-height:3.5em;">In addition, these particles obey the Pauli exclusion principle.</p>
+                <p style="line-height:3.5em;">Fermions include all quarks and leptons and all composite particles made of</p>
+                <p style="line-height:3.5em;">an odd number of these, such as all baryons and many atoms and nuclei.</p>
+                <p style="line-height:3.5em;">Fermions differ from bosons, which obey Bose-Einstein statistics.</p>  
+            `;
+
+            const fluorescense = `
+                <p style="line-height:3.5em;">Fluorescence is the emission of light by a substance that has absorbed light</p>
+                <p style="line-height:3.5em;">or other electromagnetic radiation... In most cases, the emitted light has a</p>
+                <p style="line-height:3.5em;">longer wavelength, and therefore a lower photon energy, than the absorbed radiation.</p>
+                <p style="line-height:3.5em;">A perceptible example of fluorescence occurs when the absorbed radiation is in the</p>
+                <p style="line-height:3.5em;">ultraviolet region of the electromagnetic spectrum (invisible to the human eye),</p>
+                <p style="line-height:3.5em;">while the emitted light is in the visible region...</p>
+                <p style="line-height:3.5em;">Fluorescent materials cease to glow nearly immediately when the radiation source</p>
+                <p style="line-height:3.5em;">stops, unlike phosphorescent materials, which continue to emit light...</p>  
+            `;
+
+            const hooverDam = `
+                <p style="line-height:3.5em;">Hoover Dam is a concrete arch-gravity dam in the Black Canyon of the Colorado,</p>
+                <p style="line-height:3.5em;">River, on the border between the U.S. states of Nevada and Arizona. It was</p>
+                <p style="line-height:3.5em;">constructed between 1931 and 1936 during the Great Depression and was dedicated</p>
+                <p style="line-height:3.5em;">on September 30, 1935, by President Franklin D. Roosevelt. Its construction was</p>
+                <p style="line-height:3.5em;">the result of a massive effort involving thousands of workers, and cost over</p>
+                <p style="line-height:3.5em;">one hundred lives. It was referred to as Hoover Dam after President Herbert</p>
+                <p style="line-height:3.5em;">Hoover in bills passed by Congress during its construction; it was named</p>
+                <p style="line-height:3.5em;">Boulder Dam by the Roosevelt administration.</p>  
+            `;
+
+            const nonEuclideanGeometry = `
+                <p style="line-height:3.5em;">In mathematics, non-Euclidean gemotry consists of two geometries based on</p>
+                <p style="line-height:3.5em;">axioms closely related to those that specify Euclidean geometry. As Euclidean</p>
+                <p style="line-height:3.5em;">geometry lies at the intersection of metric geometry and affine geometry,</p>
+                <p style="line-height:3.5em;">non-Euclidean geometry arises by either replacing the parallel postulate</p>
+                <p style="line-height:3.5em;">with an alternative, or relaxing the metric requirement. In the former case,</p>
+                <p style="line-height:3.5em;">one obtains hyperbolic geometry and elliptic geometry, the traditional</p>
+                <p style="line-height:3.5em;">non-Euclidean geometries. When the metric requirement is relaxed, then</p>
+                <p style="line-height:3.5em;">there are affine planes associated with the planar algebras...</p>
+            `;
+
+            const serialPeripheralInterface = `
+                <p style="line-height:3.5em;">The Serial Peripheral Interface (SPI) is a synchronous serial communication</p>
+                <p style="line-height:3.5em;">interface specification used for short-distance communication, primarily</p>
+                <p style="line-height:3.5em;">in embedded systems... SPI devices communicate in full duplex mode using</p>
+                <p style="line-height:3.5em;">a master-slave architecture usually with a single master. The master</p>
+                <p style="line-height:3.5em;">device originates the frame for reading and writing. Multiple slave-</p>
+                <p style="line-height:3.5em;">devices may be supported through selection with an individual chip</p>
+                <p style="line-height:3.5em;">select (CS), sometimes called slave select (SS) lines.</p>
+            `;
+
             const jsPsych = initJsPsych({
                 extensions: [
                     {type: jsPsychExtensionWebgazer}
@@ -26,11 +85,36 @@
             });
             
             var trials = [];
+
+            // Test screen
+            trials.push({
+                type: jsPsychHtmlButtonResponse,
+                stimulus: serialPeripheralInterface,
+                choices: ['Begin'],
+                post_trial_gap: 100
+            });
             
             // Start screen
             trials.push({
-                type: jsPsychHtmlKeyboardResponse,
-                stimulus: 'Hello world!'
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p> Welcome to the study.</p>
+                    <p> Press 'Begin' to see instructions...</p>
+                `,
+                choices: ['Begin'],
+                post_trial_gap: 100
+            });
+
+            // Instructions
+            trials.push({
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p> You will be shown a series of texts to read while being recorded.</p>
+                    <p> After each reading, you be asked to answer a few questions related to the texts</p>
+                    <p> Press 'Continue' to see set up the camera for eye tracking...</p>
+                `,
+                choices: ['Continue'],
+                post_trial_gap: 100
             });
             
             // Initialize Camera
@@ -41,8 +125,26 @@
             // Calibrate Camera
             trials.push({
                 type: jsPsychWebgazerCalibrate,
-                calibration_points: [[25,50], [50,50], [75,50], [50,25], [50,75]],
-                calibration_mode: 'click'
+                calibration_points: [
+                    [10,10],
+                    [10,50],
+                    [10,90],
+                    [30,10],
+                    [30,50],
+                    [30,90],
+                    [50,10],
+                    [50,50],
+                    [50,90],
+                    [70,10],
+                    [70,50],
+                    [70,90],
+                    [90,10],
+                    [90,50],
+                    [90,90]
+                ],
+                calibration_mode: 'view',
+                randomize_calibration_order: true,
+                repetitions_per_point: 1
             });
 
             trials.push({
@@ -50,7 +152,6 @@
                 stimulus: `
                     <p>Now we'll measure the accuracy of the calibration.</p>
                     <p>Look at each dot as it appears on the screen.</p>
-                    <p style="font-weight: bold;">You do not need to click on the dots this time.</p>
                 `,
                 choices: ['Got it'],
                 post_trial_gap: 1000
@@ -60,11 +161,20 @@
             trials.push({
                 type: jsPsychWebgazerValidate,
                 validation_points: [
-                    [25,25],[75,25],[50,50],[25,75],[75,75]
+                    [20,20],
+                    [50,20],
+                    [80,20],
+                    [20,50],
+                    [50,50],
+                    [80,50],
+                    [20,80],
+                    [50,80],
+                    [80,80]
                 ],
-                roi_radius: 200,
+                roi_radius: 100,
                 time_to_saccade: 1000,
                 validation_duration: 2000,
+                show_validation_data : true,
                 data: {
                     task: 'validate'
                 }
@@ -73,28 +183,51 @@
             trials.push({
                 type: jsPsychHtmlButtonResponse,
                 stimulus: `
-                    <p>Great, we're done with calibration!</p>
+                    <p>Great, we're done with calibration! Please try to not move your head out of position until the study is complete</p>
+                    <p>Now we will introduce the tasks for reading.</p>
+                    <p>You may choose to skip any of the texts if you wish</p>
                 `,
                 choices: ['OK']
             });
 
-            // Playground
+            // Text 1 Intro
             trials.push({
-                type: jsPsychHtmlKeyboardResponse,
-                extensions: [
-                    {
-                    type: jsPsychExtensionWebgazer, 
-                        params: { 
-                            targets: ['#scene']
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p>The following text is about Fermions</p>
+                    <p>Choose 'Skip' to skip this reading</p>
+                    <p>Otherwise, read through the text when it appears and click 'Finished' when done.</p>
+                    <p>When ready, click 'Continue'</p>
+                `,
+                post_trial_gap: 1000,
+                choices: ['Skip', 'Continue']
+            });
+
+            // Text 1
+            trials.push({
+                timeline: [{
+                    type: jsPsychHtmlButtonResponse,
+                    extensions: [
+                        {
+                        type: jsPsychExtensionWebgazer, 
+                            params: { 
+                                targets: ['#scene']
+                            }
                         }
+                    ],
+                    stimulus: fermions,
+                    choices: ['Finished'],
+                    on_load: function () {
+                        print_gaze();
                     }
-                ],
-                stimulus: 'Testing Playground!',
-                on_load: function () {
-                    start_trial();
-                    jsPsych.extensions.webgazer.onGazeUpdate(function(prediction){
-                        console.log(`Currently looking at ${prediction.x}, ${prediction.y}`);
-                    });
+                }],
+                conditional_function: function (){
+                    var data = jsPsych.data.get().last(1).values()[0];
+                        if(data.response == 0){
+                            return false;
+                        } else {
+                            return true;
+                        }
                 }
             });
 
