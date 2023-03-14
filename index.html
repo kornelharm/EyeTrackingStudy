@@ -1,0 +1,105 @@
+
+<html>
+    <head>
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugin-html-keyboard-response.js"></script>
+        <script src="jspsych/plugin-html-button-response.js"></script>
+        <script src="jspsych/plugin-webgazer-init-camera.js"></script>
+        <script src="jspsych/plugin-webgazer-calibrate.js"></script>
+        <script src="jspsych/plugin-webgazer-validate.js"></script>
+        <script src="webgazer/webgazer.js"></script>
+        <script src="jspsych/extension-webgazer.js"></script>
+        <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <script>
+
+            function start_trial(){
+                console.log("Test");
+                jsPsych.extensions.webgazer.showPredictions();
+            }
+
+            const jsPsych = initJsPsych({
+                extensions: [
+                    {type: jsPsychExtensionWebgazer}
+                ]
+            });
+            
+            var trials = [];
+            
+            // Start screen
+            trials.push({
+                type: jsPsychHtmlKeyboardResponse,
+                stimulus: 'Hello world!'
+            });
+            
+            // Initialize Camera
+            trials.push({
+                type: jsPsychWebgazerInitCamera
+            });
+            
+            // Calibrate Camera
+            trials.push({
+                type: jsPsychWebgazerCalibrate,
+                calibration_points: [[25,50], [50,50], [75,50], [50,25], [50,75]],
+                calibration_mode: 'click'
+            });
+
+            trials.push({
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p>Now we'll measure the accuracy of the calibration.</p>
+                    <p>Look at each dot as it appears on the screen.</p>
+                    <p style="font-weight: bold;">You do not need to click on the dots this time.</p>
+                `,
+                choices: ['Got it'],
+                post_trial_gap: 1000
+            });
+            
+            // Validate Camera
+            trials.push({
+                type: jsPsychWebgazerValidate,
+                validation_points: [
+                    [25,25],[75,25],[50,50],[25,75],[75,75]
+                ],
+                roi_radius: 200,
+                time_to_saccade: 1000,
+                validation_duration: 2000,
+                data: {
+                    task: 'validate'
+                }
+            });
+
+            trials.push({
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p>Great, we're done with calibration!</p>
+                `,
+                choices: ['OK']
+            });
+
+            // Playground
+            trials.push({
+                type: jsPsychHtmlKeyboardResponse,
+                extensions: [
+                    {
+                    type: jsPsychExtensionWebgazer, 
+                        params: { 
+                            targets: ['#scene']
+                        }
+                    }
+                ],
+                stimulus: 'Testing Playground!',
+                on_load: function () {
+                    start_trial();
+                    jsPsych.extensions.webgazer.onGazeUpdate(function(prediction){
+                        console.log(`Currently looking at ${prediction.x}, ${prediction.y}`);
+                    });
+                }
+            });
+
+            jsPsych.run(trials);
+        </script>
+    </body>
+</html>
+    
