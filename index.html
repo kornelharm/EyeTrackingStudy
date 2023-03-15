@@ -5,6 +5,7 @@
         <script src="jspsych/plugin-html-keyboard-response.js"></script>
         <script src="jspsych/plugin-html-button-response.js"></script>
         <script src="jspsych/plugin-survey.js"></script>
+        <script src="jspsych/plugin-survey-text.js"></script>
         <script src="jspsych/plugin-webgazer-init-camera.js"></script>
         <script src="jspsych/plugin-webgazer-calibrate.js"></script>
         <script src="jspsych/plugin-webgazer-validate.js"></script>
@@ -114,6 +115,8 @@
                 <p>When ready, click 'Continue'</p>
             `;
 
+            var ID = new Date().getTime()
+
             const jsPsych = initJsPsych({
                 extensions: [
                     {type: jsPsychExtensionWebgazer}
@@ -177,12 +180,11 @@
             // Start screen
             const start = 
             {
-                type: jsPsychHtmlButtonResponse,
-                stimulus: `
-                    <p> Welcome to the study.</p>
-                    <p> Press 'Begin' to see instructions...</p>
-                `,
-                choices: ['Begin'],
+                type: jsPsychSurveyText,
+                preamble: `<p>Welcome to the study!</p>`,
+                questions: [
+                    {prompt: "Please enter your Major?"}
+                ],
                 post_trial_gap: 100
             };
             trials.push(start);
@@ -382,7 +384,6 @@
                     {'topic' : serialIntro, 'text' : serialPeripheralInterface}
                 ]
             };
-
             trials.push(textTrials);
 
             jsPsych.run(trials);
