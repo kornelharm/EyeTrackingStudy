@@ -13,7 +13,7 @@
         <script src="jspsych/extension-webgazer.js"></script>
         <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
     </head>
-    <body style="margin-left: 0; margin-right: 0; min-width: 0;">
+    <body style="margin-left: 0; margin-right: 0; min-width: 0; text-align: center;">
         <script>
 
             function start_trial(){
@@ -27,6 +27,22 @@
                     });
                 return cancelPrint;
             }
+
+            function save(){
+                const descriptor = document.createElement("p");
+                descriptor.textContent = "Thanks for completing the study!";
+                const link = document.createElement("a");
+                link.textContent = "Download Data";
+                link.setAttribute(
+                    'href',
+                    'data:text/plain;charset=utf-8,' + encodeURIComponent("Hello")
+                );
+                link.setAttribute('download', `${ID}.results`);
+                link.style.textAlign = "center";
+                const content = document.getElementById("jspsych-content");
+                content.appendChild(descriptor);
+                content.appendChild(link);
+            }  
 
             const fermions = `
                 <p style="line-height:3.5em;">In particle physics, a fermion is a particle that follows Fermi-Dirac statistics.</p>
@@ -120,76 +136,22 @@
             const jsPsych = initJsPsych({
                 extensions: [
                     {type: jsPsychExtensionWebgazer}
-                ]
+                ],
+                on_finish: save
             });
             
             var trials = [];
-
-            // Test screen
-            const test = 
-            {
-                type: jsPsychSurvey,
-                pages: [
-                    [
-                        {
-                            type: 'html',
-                            prompt: 'Please answer the following questions'
-                        },
-                        {
-                            name: 'RatedDifficulty',
-                            type: 'multi-choice',
-                            prompt: 'Personally, how difficult is the previous text to understand? Choose the answer which is closest to your opinion',
-                            options: [  'Not difficult',
-                                        'Needs slower pace/re-reading', 
-                                        'Sections are difficult', 
-                                        'Little understanding is possible', 
-                                        'Incomprehensible'
-                                    ],
-                            required: true
-                        },
-                        {
-                            name: 'PreviousKnowledge',
-                            type: 'multi-choice',
-                            prompt: 'Before reading the text, how knowledgable were you about the topic?',
-                            options: [  
-                                        'No knowledge',
-                                        'Aware of topic', 
-                                        'Basic knowledge about topic', 
-                                        'Knowledgable about topic', 
-                                        'Could teach others about the topic'
-                                    ],
-                            required: true
-                        },
-                        {
-                            name: 'PreviousKnowledgeRelated',
-                            type: 'multi-choice',
-                            prompt: 'Before reading the text, how knowledgable were you about related topics?',
-                            options: [  
-                                        'No related knowledge',
-                                        'Aware of related topics', 
-                                        'Basic knowledge about related topics', 
-                                        'Knowledgable about topic', 
-                                        'Could teach others about related topics'
-                                    ],
-                            required: true
-                        }
-                    ]
-                ]
-            };
             
-            // Start screen
             const start = 
             {
                 type: jsPsychSurveyText,
                 preamble: `<p>Welcome to the study!</p>`,
                 questions: [
-                    {prompt: "Please enter your Major?"}
+                    {prompt: "Please enter your Major..."}
                 ],
                 post_trial_gap: 100
             };
-            trials.push(start);
-
-            // Instructions
+            
             const startInstructions = {
                 type: jsPsychHtmlButtonResponse,
                 stimulus: `
@@ -200,20 +162,13 @@
                 choices: ['Continue'],
                 post_trial_gap: 100
             };
-            trials.push(startInstructions);
-
+            
             const calibrateAndValidate = {
                 timeline: [
 
                 ]
             }
             
-            // Initialize Camera
-            trials.push({
-                type: jsPsychWebgazerInitCamera
-            });
-            
-            // Calibrate Camera
             const calibrateCamera = 
             {
                 type: jsPsychWebgazerCalibrate,
@@ -238,8 +193,7 @@
                 randomize_calibration_order: true,
                 repetitions_per_point: 1
             };
-            trials.push(calibrateCamera);
-
+            
             const validationInstructions = {
                 type: jsPsychHtmlButtonResponse,
                 stimulus: `
@@ -249,9 +203,7 @@
                 choices: ['Got it'],
                 post_trial_gap: 1000
             };
-            trials.push(validationInstructions);
-            
-            // Validate Camera
+        
             const validateCamera = 
             {
                 type: jsPsychWebgazerValidate,
@@ -274,9 +226,7 @@
                     task: 'validate'
                 }
             };
-            trials.push(validateCamera);
-
-
+            
             const readingIntroduction = 
             {
                 type: jsPsychHtmlButtonResponse,
@@ -287,8 +237,7 @@
                 `,
                 choices: ['OK']
             };
-            trials.push(readingIntroduction);
-
+            
             const textAndQuestions = 
             {
                 timeline: [
@@ -365,7 +314,6 @@
                 }
             };
 
-            
             const textTrials = {
                 timeline: [
                 { // Intro prompt
@@ -384,7 +332,19 @@
                     {'topic' : serialIntro, 'text' : serialPeripheralInterface}
                 ]
             };
-            trials.push(textTrials);
+            
+            trials.push(start);
+            /*
+            trials.push(startInstructions);
+            trials.push({
+                type: jsPsychWebgazerInitCamera
+            });
+            trials.push(calibrateCamera);
+            trials.push(validationInstructions);
+            trials.push(validateCamera);
+            trials.push(readingIntroduction);
+            trials.push(textTrials); 
+            */
 
             jsPsych.run(trials);
         </script>
