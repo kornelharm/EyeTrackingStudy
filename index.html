@@ -185,18 +185,31 @@
             const startInstructions = {
                 type: jsPsychHtmlButtonResponse,
                 stimulus: `
-                    <p> You will be shown a series of texts to read while being recorded.</p>
-                    <p> After each reading, you be asked to answer a few questions related to the texts</p>
-                    <p> Press 'Continue' to see set up the camera for eye tracking...</p>
+                    <p>You will be shown a series of texts to read while being recorded.</p>
+                    <p>After each reading, you be asked to answer a few questions related to the texts</p>
+                    <p>Press 'Continue' to see set up the camera for eye tracking...</p>
                 `,
                 choices: ['Continue'],
                 post_trial_gap: 100
             };
-            
-            const calibrateAndValidate = {
-                timeline: [
 
-                ]
+            const recalibratePrompt = {
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p>Would you like to recalibrate before moving forward?</p>
+                `,
+                choices: ["Recalibrate", "Continue"]
+            }
+
+            const calibratePrompt = {
+                type: jsPsychHtmlButtonResponse,
+                stimulus: `
+                    <p>In order to calibrate, focus on the dots as they appear on screen</p>
+                    <p>Continue focusing on each dot until they disappear</p>
+                    <p>If you feel that you need to blink, do so shortly after each dot disappears</p>
+                `,
+                choices: ["Begin Calibration"],
+                post_trial_gap: 1000
             }
             
             const calibrateCamera = 
@@ -228,9 +241,11 @@
                 type: jsPsychHtmlButtonResponse,
                 stimulus: `
                     <p>Now we'll measure the accuracy of the calibration.</p>
-                    <p>Look at each dot as it appears on the screen.</p>
+                    <p>Focus on each dot as it appears on the screen.</p>
+                    <p>Continue focusing on each dot until they disappear</p>
+                    <p>If you feel that you need to blink, do so shortly after each dot disappears</p>
                 `,
-                choices: ['Got it'],
+                choices: ['Begin Validation'],
                 post_trial_gap: 1000
             };
         
@@ -266,6 +281,25 @@
                     <p>You may choose to skip any of the texts if you wish</p>
                 `,
                 choices: ['OK']
+            };
+            
+            const recalibrate = {
+                timeline: [
+                    recalibratePrompt,
+                    {
+                        timeline:[
+                            calibratePrompt, calibrateCamera, validationInstructions, validateCamera
+                        ],
+                        conditional_function: function (){
+                            var data = jsPsych.data.get().last(1).values()[0];
+                                if(data.response == 0){
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                        }
+                    }
+                ]
             };
             
             const textAndQuestions = 
@@ -349,12 +383,13 @@
 
             const textTrials = {
                 timeline: [
-                { // Intro prompt
-                    type: jsPsychHtmlButtonResponse,
-                    stimulus: jsPsych.timelineVariable('topic'),
-                    post_trial_gap: 1000,
-                    choices: ['Skip', 'Continue']
-                },
+                    recalibrate,
+                    { // Intro prompt
+                        type: jsPsychHtmlButtonResponse,
+                        stimulus: jsPsych.timelineVariable('topic'),
+                        post_trial_gap: 1000,
+                        choices: ['Skip', 'Continue']
+                    },
                     textAndQuestions
                 ],
                 timeline_variables : [
@@ -371,6 +406,7 @@
             trials.push({
                 type: jsPsychWebgazerInitCamera
             });
+            trials.push(calibratePrompt)
             trials.push(calibrateCamera);
             trials.push(validationInstructions);
             trials.push(validateCamera);
