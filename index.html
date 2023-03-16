@@ -28,19 +28,49 @@
                 return cancelPrint;
             }
 
+            function getData(){
+                const data = jsPsych.data.get();
+                const eyeTrackingData = data.filterCustom(function (x) {return x.webgazer_data;});
+                const surveyData = data.filterCustom(function (x) {return x.trial_type == "survey";});
+                let result = new Object();
+
+                result["id"] = ID;
+                result["major"] = data.trials[0].response.Q0;
+
+                eyeTrackingData.trials.forEach(trial => {
+                    result[trial.name] = new Object();
+                    result[trial.name]["webgazer"] = trial.webgazer_data;
+                });
+
+                surveyData.trials.forEach(trial => {
+                    result[trial.name]["survey"] = trial.response;
+                });
+
+                return result;
+            }
+
             function save(){
+                const content = document.getElementById("jspsych-content");
+
                 const descriptor = document.createElement("p");
                 descriptor.textContent = "Thanks for completing the study!";
+                content.appendChild(descriptor);
+
+                const loading = document.createElement("p");
+                loading.textContent = "Please wait, processing...";
+                content.appendChild(loading);
+
+                const data = getData();
+                
                 const link = document.createElement("a");
                 link.textContent = "Download Data";
                 link.setAttribute(
                     'href',
-                    'data:text/plain;charset=utf-8,' + encodeURIComponent("Hello")
+                    `data:text/plain;charset=utf-8,${JSON.stringify(data)}`
                 );
                 link.setAttribute('download', `${ID}.results`);
                 link.style.textAlign = "center";
-                const content = document.getElementById("jspsych-content");
-                content.appendChild(descriptor);
+                loading.remove();
                 content.appendChild(link);
             }  
 
@@ -253,6 +283,8 @@
                         ],
                         stimulus: jsPsych.timelineVariable('text'),
                         choices: ['Finished'],
+                        task: "reading",
+                        data: {name : jsPsych.timelineVariable('name')}
                     },
                     {
                         type: jsPsychSurvey,
@@ -301,7 +333,8 @@
                                     required: true
                                 }
                             ]
-                        ]
+                        ],
+                        data: {name : jsPsych.timelineVariable('name')}
                     }
                 ],
                 conditional_function: function (){
@@ -325,16 +358,15 @@
                     textAndQuestions
                 ],
                 timeline_variables : [
-                    {'topic' : fermionsIntro, 'text' : fermions},
-                    {'topic' : fluorescenseIntro, 'text' : fluorescense},
-                    {'topic' : hooverIntro, 'text' : hooverDam},
-                    {'topic' : nonEuclidIntro, 'text' : nonEuclideanGeometry},
-                    {'topic' : serialIntro, 'text' : serialPeripheralInterface}
+                    {'name' : 'fermions',                   'topic' : fermionsIntro,        'text' : fermions},
+                    {'name' : 'fluorescense',               'topic' : fluorescenseIntro,    'text' : fluorescense},
+                    {'name' : 'hooverDam',                  'topic' : hooverIntro,          'text' : hooverDam},
+                    {'name' : 'nonEuclideanGeometry',       'topic' : nonEuclidIntro,       'text' : nonEuclideanGeometry},
+                    {'name' : 'serialPeripheralInterface',  'topic' : serialIntro,          'text' : serialPeripheralInterface}
                 ]
             };
             
             trials.push(start);
-            /*
             trials.push(startInstructions);
             trials.push({
                 type: jsPsychWebgazerInitCamera
@@ -344,7 +376,6 @@
             trials.push(validateCamera);
             trials.push(readingIntroduction);
             trials.push(textTrials); 
-            */
 
             jsPsych.run(trials);
         </script>
