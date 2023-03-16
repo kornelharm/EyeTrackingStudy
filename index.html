@@ -318,7 +318,10 @@
                         stimulus: jsPsych.timelineVariable('text'),
                         choices: ['Finished'],
                         task: "reading",
-                        data: {name : jsPsych.timelineVariable('name')}
+                        data: {name : jsPsych.timelineVariable('name')},
+                        on_load: function() {
+                            jsPsych.extensions.webgazer.hidePredictions();
+                        }
                     },
                     {
                         type: jsPsychSurvey,
