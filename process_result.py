@@ -71,6 +71,19 @@ def processData(data):
 	resultID = data.get("id") 
 	with open(f"results/{resultID}/participant_info.txt", "w") as participant:
 		participant.write(f"{data.get('major')}")
+	data.pop("id")
+	data.pop("major")
+	for key in data:
+		reading = data.get(key)
+		with open(f"results/{resultID}/{key}_webgazer.csv", "w") as csv:
+			csv.write("x,y,t\n")
+			points = reading.get("webgazer")
+			for point in points:
+				x = point.get('x')
+				y = point.get('y')
+				t = point.get('t')
+				csv.write(f"{x},{y},{t}\n")
+
 
 
 def main():
