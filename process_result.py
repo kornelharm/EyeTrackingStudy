@@ -55,22 +55,22 @@ def importData(fileStr):
 	return dataDict
 
 
-def createDirectory(fileStr):
-	extensionIndex = fileStr.find(".")
-	if(extensionIndex == -1):
-		error("No file extension on result file, cannot create directory")
-	else:
-		fileName = fileStr[:fileStr.find(".")]
-
+def createResultDirectory(id):
 	try:
-		os.makedirs(f"results/{fileName}")	
+		os.makedirs(f"results/{id}")	
 	except FileExistsError:
 		if(not override):
 			error("Result already processed or partially processed")
 		else:
 			debugPrint("Overriding existing results")
-			shutil.rmtree(f"results/{fileName}")
-			os.makedirs(f"results/{fileName}")	
+			shutil.rmtree(f"results/{id}")
+			os.makedirs(f"results/{id}")	
+
+
+def processData(data):
+	resultID = data.get("id") 
+	with open(f"results/{resultID}/participant_info.txt", "w") as participant:
+		participant.write(f"{data.get('major')}")
 
 
 def main():
@@ -80,7 +80,10 @@ def main():
 		error("Invalid arguments provided.\nPlease provide only the target result file\n")
 	targetResultFile = args[0]
 	data = importData(targetResultFile)
-	createDirectory(targetResultFile)
+	resultID = data.get("id")
+	createResultDirectory(resultID)
+	processData(data)
+
 	exit(0)
 
 
