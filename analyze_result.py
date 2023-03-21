@@ -138,7 +138,7 @@ def analyzeCSV(x, y, t, directory, filename):
 		ax.set_title("Gaze Frequency")
 		ax.set_xlabel("Horizontal Postion ($10^1$ px)")
 		ax.set_ylabel("Vertical Postion ($10^1$ px)")
-		im = ax.imshow(heatmap, cmap="inferno")
+		im = ax.imshow(heatmap, cmap="inferno", origin="lower")
 		fig.tight_layout()
 		plt.savefig(f"{exportHeatName}_heat.svg")
 		plt.close(fig)
