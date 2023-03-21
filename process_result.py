@@ -64,7 +64,9 @@ def createResultDirectory(id):
 		else:
 			debugPrint("Overriding existing results")
 			shutil.rmtree(f"results/{id}")
-			os.makedirs(f"results/{id}")	
+			os.makedirs(f"results/{id}")
+			os.makedirs(f"results/{id}/anims")
+			os.makedirs(f"results/{id}/plots")	
 
 
 def processData(data):
