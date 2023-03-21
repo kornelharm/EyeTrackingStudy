@@ -66,7 +66,8 @@ def createResultDirectory(id):
 			shutil.rmtree(f"results/{id}")
 			os.makedirs(f"results/{id}")
 			os.makedirs(f"results/{id}/anims")
-			os.makedirs(f"results/{id}/plots")	
+			os.makedirs(f"results/{id}/plots")
+			os.makedirs(f"results/{id}/heatmaps")	
 
 
 def processData(data):

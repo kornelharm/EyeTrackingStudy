@@ -9,9 +9,12 @@ import graphing
 
 
 # ---- Options ----
-debug = False    #d - Print debug messages
-silent = False   #s - fail silently, no progress updates or debug messages
-override = False #o - If result has been processed before, override 
+noAnims = False		# -a  --noanims		Do not save animations
+debug = False		# -d, --debug		Print debug messages
+noHeats = False		# -h  --noheats		Do not save heatmaps
+override = False	# -o, --override	If result has been processed before, override 
+noPlots = False		# -p  --noplots		Do not save plots
+silent = False		# -s, --silent		fail silently, no progress updates or debug messages
 
 
 def debugPrint(text):
@@ -27,21 +30,30 @@ def error(text):
 
 def getopts():
 	argList = sys.argv[1:]
-	options = "dos"
-	longOptions = ["debug", "override", "silent"]
+	options = "adhops"
+	longOptions = ["noanims", "debug", "noheats", "override", "noplots", "silent"]
 	try:
-		global silent
-		global override
+		global noAnims
 		global debug
+		global noHeats
+		global override
+		global noPlots
+		global silent
 		options, args  = getopt.getopt(argList, options, longOptions)
 		for opt, val in options:
-			if opt in ("-s", "--silent"):
-				silent = True
-			if opt in ("-o", "--override"):
-				override = True
+			if opt in ("-a", "--noanims"):
+				noAnims = True
 			if opt in ("-d", "--debug"):
 				debug = True
 				debugPrint("Enabled")
+			if opt in ("-h", "--noheats"):
+				noHeats = True
+			if opt in ("-o", "--override"):
+				override = True
+			if opt in ("-p", "--noplots"):
+				noPlots = True
+			if opt in ("-s", "--silent"):
+				silent = True
 	except getopt.error as err:
 		error(str(err))
 
@@ -82,33 +94,54 @@ def analyzeCSV(x, y, t, directory, filename):
 
 	exportPlotName = f"{directory}/plots/{filename.rsplit('_')[0]}"
 	exportAnimName = f"{directory}/anims/{filename.rsplit('_')[0]}"
+	exportHeatName = f"{directory}/heatmaps/{filename.rsplit('_')[0]}"
 
 	# x vs t
-	graphing.save_graph(f"{exportPlotName}_x_vs_t_points.svg", [], [], colors1, "rainbow", [t], [x], [t[-1], 1920], "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
-	graphing.save_graph(f"{exportPlotName}_x_vs_t_line.svg", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
-	debugPrint(f"Saving {exportAnimName}_x_vs_t_points.gif...")
-	graphing.save_animation(f"{exportAnimName}_x_vs_t_points.gif", [], [], colors1, "rainbow", [t], [x], [t[-1], 1920], len(x), 1, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
-	debugPrint(f"Saving {exportAnimName}_x_vs_t_line.gif...")
-	graphing.save_animation(f"{exportAnimName}_x_vs_t_line.gif", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], len(x), 1, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
+	if(not noPlots):
+		graphing.save_graph(f"{exportPlotName}_x_vs_t_points.svg", [], [], colors1, "rainbow", [t], [x], [t[-1], 1920], "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
+		graphing.save_graph(f"{exportPlotName}_x_vs_t_line.svg", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
+	if(not noAnims):
+		debugPrint(f"Saving {exportAnimName}_x_vs_t_points.gif...")
+		graphing.save_animation(f"{exportAnimName}_x_vs_t_points.gif", [], [], colors1, "rainbow", [t], [x], [t[-1], 1920], len(x), 1, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
+		debugPrint(f"Saving {exportAnimName}_x_vs_t_line.gif...")
+		graphing.save_animation(f"{exportAnimName}_x_vs_t_line.gif", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], len(x), 1, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
 
-	# y vs t
-	graphing.save_graph(f"{exportPlotName}_y_vs_t_points.svg", [], [], colors1, "rainbow", [t], [yFlipped], [t[-1], 1080], "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
-	graphing.save_graph(f"{exportPlotName}_y_vs_t_line.svg", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
-	debugPrint(f"Saving {exportAnimName}_y_vs_t_points.gif...")
-	graphing.save_animation(f"{exportAnimName}_y_vs_t_points.gif", [], [], colors1, "rainbow", [t], [yFlipped], [t[-1], 1080], len(x), 1, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
-	debugPrint(f"Saving {exportAnimName}_y_vs_t_line.gif...")
-	graphing.save_animation(f"{exportAnimName}_y_vs_t_line.gif", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], len(x), 1, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
+	# # y vs t
+	if(not noPlots):
+		graphing.save_graph(f"{exportPlotName}_y_vs_t_points.svg", [], [], colors1, "rainbow", [t], [yFlipped], [t[-1], 1080], "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
+		graphing.save_graph(f"{exportPlotName}_y_vs_t_line.svg", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
+	if(not noAnims):
+		debugPrint(f"Saving {exportAnimName}_y_vs_t_points.gif...")
+		graphing.save_animation(f"{exportAnimName}_y_vs_t_points.gif", [], [], colors1, "rainbow", [t], [yFlipped], [t[-1], 1080], len(x), 1, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
+		debugPrint(f"Saving {exportAnimName}_y_vs_t_line.gif...")
+		graphing.save_animation(f"{exportAnimName}_y_vs_t_line.gif", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], len(x), 1, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
 
-	# y vs x
-	graphing.save_graph(f"{exportPlotName}_y_vs_x_points.svg", [], [], colors1, "rainbow", [x], [yFlipped], [1920, 1080], "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
-	graphing.save_graph(f"{exportPlotName}_y_vs_x_line.svg", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
-	debugPrint(f"Saving {exportAnimName}_y_vs_x_points.gif...")
-	graphing.save_animation(f"{exportAnimName}_y_vs_x_points.gif", [], [], colors1, "rainbow", [x], [yFlipped], [1920, 1080], len(x), 1, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
-	debugPrint(f"Saving {exportAnimName}_y_vs_x_line.gif...")
-	graphing.save_animation(f"{exportAnimName}_y_vs_x_line.gif", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], len(x), 1, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
+	# # y vs x
+	if(not noPlots):
+		graphing.save_graph(f"{exportPlotName}_y_vs_x_points.svg", [], [], colors1, "rainbow", [x], [yFlipped], [1920, 1080], "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
+		graphing.save_graph(f"{exportPlotName}_y_vs_x_line.svg", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
+	if(not noAnims):
+		debugPrint(f"Saving {exportAnimName}_y_vs_x_points.gif...")
+		graphing.save_animation(f"{exportAnimName}_y_vs_x_points.gif", [], [], colors1, "rainbow", [x], [yFlipped], [1920, 1080], len(x), 1, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
+		debugPrint(f"Saving {exportAnimName}_y_vs_x_line.gif...")
+		graphing.save_animation(f"{exportAnimName}_y_vs_x_line.gif", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], len(x), 1, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
 
-	# for i in range(len(_x)):
-		# plt.plot(_x[i], _y[i], color=colors[i], marker="+", markersize=5, linestyle="dashed", linewidth=2)
+	
+	# Generate heatmap for y vs x
+	if(not noHeats):
+		heatmap = np.zeros((1080//10, 1920//10))
+		for i in range(len(x)):
+			yIndex = int(yFlipped[i]//10)
+			xIndex = int(x[i]//10)
+			heatmap[yIndex][xIndex] += 1
+		fig, ax = plt.subplots()
+		ax.set_title("Gaze Frequency")
+		ax.set_xlabel("Horizontal Postion ($10^1$ px)")
+		ax.set_ylabel("Vertical Postion ($10^1$ px)")
+		im = ax.imshow(heatmap, cmap="inferno")
+		fig.tight_layout()
+		plt.savefig(f"{exportHeatName}_heat.svg")
+		plt.close(fig)
 
 
 def main():
@@ -120,7 +153,6 @@ def main():
 	for csvFile in files:
 		x, y, t = importPoints(f"{targetDirectory}/{csvFile}")
 		analyzeCSV(x, y, t, targetDirectory, csvFile)
-		break
 	exit(0)
 
 
