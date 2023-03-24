@@ -47,10 +47,10 @@ def getopts():
 
 def importData(fileStr):
 	try:
-		with open(f"results/{fileStr}", "r") as file:
+		with open(f"{fileStr}", "r") as file:
 			dataDict = json.load(file)
 	except FileNotFoundError:
-		error(f"Specified result file not found: results/{fileStr}\n")
+		error(f"Specified result file not found: {fileStr}\n")
 	
 	return dataDict
 
