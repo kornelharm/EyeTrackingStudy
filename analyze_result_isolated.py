@@ -128,9 +128,9 @@ def analyzeCSV(x, y, t, directory, filename):
 		graphing.save_graph(f"{exportPlotName}_x_vs_t_line.svg", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
 	if(not noAnims):
 		debugPrint(f"Saving {exportAnimName}_x_vs_t_points.gif...")
-		graphing.save_animation(f"{exportAnimName}_x_vs_t_points.gif", [], [], colors1, "rainbow", [t], [x], [t[-1], 1920], len(x), 50, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
+		graphing.save_animation(f"{exportAnimName}_x_vs_t_points.gif", [], [], colors1, "rainbow", [t], [x], [t[-1], 1920], len(x), 200, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
 		debugPrint(f"Saving {exportAnimName}_x_vs_t_line.gif...")
-		graphing.save_animation(f"{exportAnimName}_x_vs_t_line.gif", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], len(x), 50, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
+		graphing.save_animation(f"{exportAnimName}_x_vs_t_line.gif", [t], [x], colors1, "rainbow", [], [], [t[-1], 1920], len(x), 200, False, "Horizontal Position vs Time", "Time (ms)", "Horizontal Position (px)")
 
 	# # y vs t
 	if(not noPlots):
@@ -138,9 +138,9 @@ def analyzeCSV(x, y, t, directory, filename):
 		graphing.save_graph(f"{exportPlotName}_y_vs_t_line.svg", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
 	if(not noAnims):
 		debugPrint(f"Saving {exportAnimName}_y_vs_t_points.gif...")
-		graphing.save_animation(f"{exportAnimName}_y_vs_t_points.gif", [], [], colors1, "rainbow", [t], [yFlipped], [t[-1], 1080], len(x), 50, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
+		graphing.save_animation(f"{exportAnimName}_y_vs_t_points.gif", [], [], colors1, "rainbow", [t], [yFlipped], [t[-1], 1080], len(x), 200, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
 		debugPrint(f"Saving {exportAnimName}_y_vs_t_line.gif...")
-		graphing.save_animation(f"{exportAnimName}_y_vs_t_line.gif", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], len(x), 50, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
+		graphing.save_animation(f"{exportAnimName}_y_vs_t_line.gif", [t], [yFlipped], colors1, "rainbow", [], [], [t[-1], 1080], len(x), 200, False, "Vertical Position vs Time", "Time (ms)", "Vertical Position (px)")
 
 	# # y vs x
 	if(not noPlots):
@@ -148,9 +148,9 @@ def analyzeCSV(x, y, t, directory, filename):
 		graphing.save_graph(f"{exportPlotName}_y_vs_x_line.svg", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
 	if(not noAnims):
 		debugPrint(f"Saving {exportAnimName}_y_vs_x_points.gif...")
-		graphing.save_animation(f"{exportAnimName}_y_vs_x_points.gif", [], [], colors1, "rainbow", [x], [yFlipped], [1920, 1080], len(x), 50, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
+		graphing.save_animation(f"{exportAnimName}_y_vs_x_points.gif", [], [], colors1, "rainbow", [x], [yFlipped], [1920, 1080], len(x), 200, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
 		debugPrint(f"Saving {exportAnimName}_y_vs_x_line.gif...")
-		graphing.save_animation(f"{exportAnimName}_y_vs_x_line.gif", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], len(x), 50, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
+		graphing.save_animation(f"{exportAnimName}_y_vs_x_line.gif", [x], [yFlipped], colors1, "rainbow", [], [], [1920, 1080], len(x), 200, False, "Vertical vs Horizontal Position", "Horizontal Position (px)", "Vertical Position (px)")
 
 	
 	# Generate heatmap for y vs x
