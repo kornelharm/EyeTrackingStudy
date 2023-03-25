@@ -133,6 +133,9 @@ def analyzeCSV(x, y, t, directory, filename):
 		for i in range(len(x)):
 			yIndex = int(yFlipped[i]//10)
 			xIndex = int(x[i]//10)
+			if(i >= len(x) or yIndex >= 108 or xIndex >= 108):
+				print(f"{exportHeatName} {i} {yIndex} {xIndex}");
+				break
 			heatmap[yIndex][xIndex] += 1
 		fig, ax = plt.subplots()
 		ax.set_title("Gaze Frequency")
